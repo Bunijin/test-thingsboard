@@ -6,8 +6,8 @@
 #define pinDht 15
 DHTesp dhtSensor;
 
-#define WIFI_SSID "Manat"  // Changed from WIFI_AP to WIFI_SSID
-#define WIFI_PASS "0898936386"
+#define WIFI_SSID "xxxxx"  // Changed from WIFI_AP to WIFI_SSID
+#define WIFI_PASS "----------"
 
 #define TB_SERVER "thingsboard.cloud"
 #define TOKEN "IHySAkLlhsHLTZcSgG0C"
