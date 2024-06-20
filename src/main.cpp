@@ -14,10 +14,55 @@ DHTesp dhtSensor;
 
 constexpr uint16_t MAX_MESSAGE_SIZE = 128U;
 
+// added
+int temp1 = 30;
+int humid1 = 50;
+
 WiFiClient espClient;
 Arduino_MQTT_Client mqttClient(espClient);
 ThingsBoard tb(mqttClient, MAX_MESSAGE_SIZE);
 
+void connectToWiFi();
+void connectToThingsBoard();
+void sendDataToThingsBoard(float temp, int hum);
+
+// Main
+void setup() {
+  Serial.begin(115200);
+  dhtSensor.setup(pinDht, DHTesp::DHT22);
+  connectToWiFi();
+  connectToThingsBoard();
+}
+
+void loop() {
+  if (WiFi.status() != WL_CONNECTED) {
+    connectToWiFi();
+  }
+
+  // TempAndHumidity data = dhtSensor.getTempAndHumidity();
+  // float temp = data.temperature;
+  // int hum = data.humidity;
+
+  // Serial.println(temp);
+  // Serial.println(hum);
+
+  if (!tb.connected()) {
+    connectToThingsBoard();
+  }
+
+  if(temp1 >= 80) {
+    temp1 = 30;
+    humid1 = 50;
+  }
+  // change back to (temp, hum)
+  sendDataToThingsBoard(temp1++, humid1++);
+
+  delay(3000);
+
+  tb.loop();
+}
+
+// Functions
 void connectToWiFi() {
   Serial.println("Connecting to WiFi...");
   int attempts = 0;
@@ -61,32 +106,3 @@ void sendDataToThingsBoard(float temp, int hum) {
   Serial.println("Data sent");
 }
 
-void setup() {
-  Serial.begin(115200);
-  dhtSensor.setup(pinDht, DHTesp::DHT22);
-  connectToWiFi();
-  connectToThingsBoard();
-}
-
-void loop() {
-  if (WiFi.status() != WL_CONNECTED) {
-    connectToWiFi();
-  }
-
-  TempAndHumidity data = dhtSensor.getTempAndHumidity();
-  float temp = data.temperature;
-  int hum = data.humidity;
-
-  Serial.println(temp);
-  Serial.println(hum);
-
-  if (!tb.connected()) {
-    connectToThingsBoard();
-  }
-
-  sendDataToThingsBoard(temp, hum);
-
-  delay(3000);
-
-  tb.loop();
-}
